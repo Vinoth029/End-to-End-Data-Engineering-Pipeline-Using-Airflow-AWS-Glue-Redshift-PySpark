@@ -75,7 +75,4 @@ Redshift MERGE → Target Table (SCD Type 2)
 
 ## 📚 Conclusion
 
-This end-to-end pipeline demonstrates how to build a **real-world production workflow** for AWS-based Data Engineering systems using **Airflow, AWS Glue, PySpark, and Redshift**.  
-It showcases best practices for orchestration, quality, transformation, and warehouse loading in a scalable, maintainable architecture.
-
-
+This end-to-end pipeline demonstrates how to build a **real-world production workflow** for AWS-based Data Engineering systems using **Airflow, AWS Glue, PySpark, and Redshift**.
