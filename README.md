@@ -1,4 +1,4 @@
-# End-to-End Data Engineering Pipeline Using Airflow, AWS Glue, Redshift & PySpark
+## End-to-End Data Engineering Pipeline Using Airflow, AWS Glue, Redshift & PySpark
 
 This project demonstrates a production-grade data engineering pipeline orchestrated using **Apache Airflow**, with scalable data processing using **AWS Glue (PySpark)** and downstream loading into **Amazon Redshift** using staging + **SCD Type 2** merge logic.
 
