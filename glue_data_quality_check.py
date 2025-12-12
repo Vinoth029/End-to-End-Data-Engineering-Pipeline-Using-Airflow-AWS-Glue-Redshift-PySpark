@@ -15,8 +15,8 @@ df = spark.read.parquet(s3_input)
 
 check = Check(spark, CheckLevel.Error, "dq_checks") \
     .hasSize(lambda x: x > 0) \
-    .isComplete("business_key") \
-    .isUnique("business_key") \
+    .isComplete("customer_id") \
+    .isUnique("customer_id") \
     .isContainedIn("status", ["A", "I"])
 
 result = VerificationSuite(spark).onData(df).addCheck(check).run()
@@ -26,7 +26,7 @@ report = {"passed": passed, "details": str(result.checkResults)}
 
 s3 = boto3.client('s3')
 s3.put_object(
-    Bucket='my-ingest-bucket',
+    Bucket='ingest-bucket',
     Key=f'quality_results/{run_id}/quality_report.json',
     Body=json.dumps(report)
 )
