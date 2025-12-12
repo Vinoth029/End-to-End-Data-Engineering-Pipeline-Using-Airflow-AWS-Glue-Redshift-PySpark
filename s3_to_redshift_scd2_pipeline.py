@@ -21,28 +21,28 @@ with DAG(
 
     wait_for_files = S3PrefixSensor(
         task_id='wait_for_files',
-        bucket_name='my-ingest-bucket',
-        prefix='incoming/mydataset/{{ ds_nodash }}',
+        bucket_name='ingest-bucket',
+        prefix='incoming/dataset/{{ ds_nodash }}',
         poke_interval=60,
         timeout=21600
     )
 
     run_crawler = AwsGlueCrawlerOperator(
         task_id='run_glue_crawler',
-        config={'Name': 'mydataset-crawler'}
+        config={'Name': 'dataset-crawler'}
     )
 
     run_data_quality = AwsGlueJobOperator(
         task_id='run_data_quality_job',
-        job_name='mydataset_data_quality_job',
+        job_name='dataset_data_quality_job',
         script_args={
-            '--s3_input': 's3://my-ingest-bucket/incoming/mydataset/{{ ds_nodash }}',
+            '--s3_input': 's3://ingest-bucket/incoming/dataset/{{ ds_nodash }}',
             '--results_path': '{{ ds_nodash }}'
         }
     )
 
     def check_dq_results(**context):
-        bucket='my-ingest-bucket'
+        bucket='ingest-bucket'
         key=f'quality_results/{context["ds_nodash"]}/quality_report.json'
         s3 = boto3.client('s3')
         resp = s3.get_object(Bucket=bucket, Key=key)
@@ -57,10 +57,10 @@ with DAG(
 
     run_transform = AwsGlueJobOperator(
         task_id='run_transform_job',
-        job_name='mydataset_transform_job',
+        job_name='dataset_transform_job',
         script_args={
-            '--s3_input': 's3://my-ingest-bucket/incoming/mydataset/{{ ds_nodash }}',
-            '--s3_output': 's3://my-processed-bucket/processed/mydataset/{{ ds_nodash }}'
+            '--s3_input': 's3://ingest-bucket/incoming/mydataset/{{ ds_nodash }}',
+            '--s3_output': 's3://processed-bucket/processed/mydataset/{{ ds_nodash }}'
         }
     )
 
@@ -69,7 +69,7 @@ with DAG(
         postgres_conn_id='redshift_conn',
         sql="""
         COPY staging_mydataset
-        FROM 's3://my-processed-bucket/processed/mydataset/{{ ds_nodash }}/'
+        FROM 's3://processed-bucket/processed/dataset/{{ ds_nodash }}/'
         IAM_ROLE 'arn:aws:iam::123456789012:role/RedshiftCopyRole'
         FORMAT AS PARQUET;
         """
